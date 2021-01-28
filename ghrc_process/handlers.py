@@ -2,10 +2,11 @@
 import os
 import json
 import boto3
+from pytz import utc
 import traceback
 from botocore.client import Config
 from botocore.vendored.requests.exceptions import ReadTimeout
-from cumulus_process.loggers import getLogger
+from ghrc_process.loggers import getLogger
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
@@ -24,12 +25,12 @@ def activity(handler, arn=os.getenv('ACTIVITY_ARN')):
     """ An activity service for use with AWS Step Functions """
     # We need to persist the database for the run
     # TODO make the location of sqlite an environment variable 
-    mount_folder = "/mnt/data2esf"
+    mount_folder = "/tmp/dataprocess"
     if not os.path.exists(mount_folder):
         os.makedirs(mount_folder)
     sqlite_file = "cumulusProcess.sqlite"
     jobstores = {
-        'default': SQLAlchemyJobStore(url=f"sqlite://{mount_folder}/{sqlite_file}")
+        'default': SQLAlchemyJobStore(url=f"sqlite:///{mount_folder}/{sqlite_file}")
     }
     executors = {
         'default': ThreadPoolExecutor(20),
@@ -37,9 +38,9 @@ def activity(handler, arn=os.getenv('ACTIVITY_ARN')):
     }
     job_defaults = {
         'coalesce': False,
-        'max_instances': 300
+        'max_instances': 500
     }
-    scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults)
+    scheduler = BackgroundScheduler(jobstores=jobstores, timezone=utc, executors=executors, job_defaults=job_defaults)
 
     scheduler.add_job(get_and_run_task, 'interval',seconds=1, kwargs= dict(handler=handler, arn=arn) )
     scheduler.start()

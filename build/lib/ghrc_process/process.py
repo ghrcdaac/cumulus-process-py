@@ -9,10 +9,10 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from dicttoxml import dicttoxml
 from xml.dom.minidom import parseString
-from cumulus_process.s3 import download, upload
-from cumulus_process.loggers import getLogger
-from cumulus_process.cli import cli
-from cumulus_process.handlers import activity
+from ghrc_process.s3 import download, upload
+from ghrc_process.loggers import getLogger
+from ghrc_process.cli import cli
+from ghrc_process.handlers import activity
 from run_cumulus_task import run_cumulus_task
 
 logger = getLogger(__name__)

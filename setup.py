@@ -4,7 +4,7 @@ from codecs import open
 from setuptools import setup, find_packages
 import imp
 
-__version__ = imp.load_source('cumulus_process.version', 'cumulus_process/version.py').__version__
+__version__ = imp.load_source('ghrc_process.version', 'ghrc_process/version.py').__version__
 
 # get dependencies
 here = os.path.abspath(os.path.dirname(__file__))
@@ -17,7 +17,7 @@ install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 
 
 setup(
-    name='cumulus_process',
+    name='ghrc_process',
     version=__version__,
     author='Matthew Hanson (matthewhanson), Alireza J (scisco)',
     description='Library for creating Cumulus Process tasks in Python',
